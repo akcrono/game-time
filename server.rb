@@ -69,8 +69,6 @@ get '/' do
   @standings = build_standings
   @standings = @standings.sort_by {|k, v| -v[:losses]}
   @standings = @standings.sort_by {|k, v| -v[:wins]}
-  puts @standings
-
 
   erb :index
 end
