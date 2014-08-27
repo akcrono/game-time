@@ -3,25 +3,30 @@ require 'csv'
 require 'pry'
 require 'sinatra/reloader'
 
+def find_or_build_team(teams, name)
+  if teams[name].nil?
+    teams[name] = { wins: 0, losses: 0 }
+  end
+
+  teams[name]
+end
 
 def build_standings
   teams = Hash.new
-  CSV.foreach('game_results.csv', headers: true, header_converters: :symbol, converters: :all) do |row|
-    if teams[row[:home_team]] == nil
-      teams[row[:home_team]] = {wins: 0, losses: 0}
-    end
-    if teams[row[:away_team]] == nil
-      teams[row[:away_team]] = {wins: 0, losses: 0}
-    end
-    if row[:home_score] > row[:away_score]
-      teams[row[:home_team]][:wins] += 1
-      teams[row[:away_team]][:losses] += 1
-    else
-      teams[row[:home_team]][:losses] += 1
-      teams[row[:away_team]][:wins] += 1
-    end
 
+  CSV.foreach('game_results.csv', headers: true, header_converters: :symbol, converters: :all) do |game|
+    home_team = find_or_build_team(teams, game[:home_team])
+    away_team = find_or_build_team(teams, game[:away_team])
+
+    if game[:home_score] > game[:away_score]
+      home_team[:wins] += 1
+      away_team[:losses] += 1
+    else
+      away_team[:wins] += 1
+      home_team[:losses] += 1
+    end
   end
+
   teams
 end
 
