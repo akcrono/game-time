@@ -60,24 +60,8 @@ def get_history team
   team_history
 end
 
-def get_record team
-  team_record = {wins: 0, losses: 0}
-  CSV.foreach('game_results.csv', headers: true, header_converters: :symbol, converters: :all) do |row|
-    if row[:home_team] == team
-      if row[:home_score] > row[:away_score]
-        team_record[:wins] += 1
-      else
-        team_record[:losses] += 1
-      end
-    elsif row[:away_team] == team
-      if row[:home_score] < row[:away_score]
-        team_record[:wins] += 1
-      else
-        team_record[:losses] += 1
-      end
-    end
-  end
-  team_record
+def get_record(team)
+  build_standings[team]
 end
 
 get '/' do
@@ -91,8 +75,8 @@ end
 
 get '/teams/:team' do
   @this_team = params[:team]
-  @team_history = get_history @this_team
-  @team_record = get_record @this_team
+  @team_history = get_history(@this_team)
+  @team_record = get_record(@this_team)
 
   erb :teams
 end
