@@ -11,10 +11,20 @@ def find_or_build_team(teams, name)
   teams[name]
 end
 
+def game_results
+  game_results = []
+
+  CSV.foreach('game_results.csv', headers: true, header_converters: :symbol, converters: :all) do |game|
+    game_results << game.to_hash
+  end
+
+  game_results
+end
+
 def build_standings
   teams = Hash.new
 
-  CSV.foreach('game_results.csv', headers: true, header_converters: :symbol, converters: :all) do |game|
+  game_results.each do |game|
     home_team = find_or_build_team(teams, game[:home_team])
     away_team = find_or_build_team(teams, game[:away_team])
 
