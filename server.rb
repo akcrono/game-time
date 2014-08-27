@@ -67,8 +67,9 @@ end
 
 get '/' do
   @standings = build_standings
-  @standings = @standings.sort_by {|k, v| -v[:losses]}
-  @standings = @standings.sort_by {|k, v| -v[:wins]}
+  @standings = @standings.sort_by do |name, record|
+    [-record[:wins], record[:losses]]
+  end
 
   erb :index
 end
